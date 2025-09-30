@@ -1,0 +1,11 @@
+[flake8]
+ignore = E203, E266, E501, W503, W293, E701, F811, F821
+
+max-line-length = 120
+
+exclude = .git, __pycace__, migrations, .venv, venv, tests
+
+select = E, F, W, C, N
+
+max-complexity = 10 
+enable-extentions = BLACK

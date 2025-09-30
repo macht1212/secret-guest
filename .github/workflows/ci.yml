@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ostrovok
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: ostrovok_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      minio:
+        image: minio/minio:latest
+        ports:
+          - 9000:9000
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: |
+          pipx install poetry
+
+      - name: Cache Poetry virtualenv
+        id: cache-poetry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-${{ hashFiles('poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          poetry install --only=main --only=dev --no-root
+
+      - name: Run database migrations
+        run: |
+          poetry run alembic upgrade head
+        env:
+          POSTGRES_USER: ostrovok
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: ostrovok_test
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+          MINIO_ROOT_HOST: localhost
+          MINIO_ROOT_PORT: 9000
+          MINIO_ROOT_BUCKET_NAME: secret-guest-documents
+          SECRET_KEY: "super-secret-key-for-ci-only"
+          ALGORITHM: "HS256"
+
+      - name: Run code style checks
+        run: |
+          poetry run black --check .
+          poetry run flake8 .
