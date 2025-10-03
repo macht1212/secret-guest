@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     MINIO_ROOT_PORT: str
     MINIO_ROOT_USER: str
     MINIO_ROOT_PASSWORD: str
-    MINIO_ROOT_BUCKET_NAME: str
 
     @property
     def MINIO_URL(self):

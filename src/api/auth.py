@@ -15,8 +15,19 @@ router = APIRouter(prefix="/auth", tags=["Авторизация и аутент
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-async def register(user_data: UserRegisterAdd, db: DBDep, hotel_owner: bool = False):
+async def register(
+    user_data: UserRegisterAdd,
+    response: Response,
+    db: DBDep,
+    hotel_owner: bool = False,
+):
     try:
+        existing_user = await db.users.get_one_or_none(email=user_data.email)
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Пользователь с таким email уже существует"
+            )
+
         hashed_password = auth.create_hashed_password(user_data.password)
 
         if hotel_owner:
@@ -36,17 +47,21 @@ async def register(user_data: UserRegisterAdd, db: DBDep, hotel_owner: bool = Fa
             role=user_role,
         )
 
-        await db.users.add(new_user_data)
+        user = await db.users.add(new_user_data)
         await db.commit()
+
+        token = auth.create_auth_token({"user_id": user.id})
+        response.set_cookie(key="access_token", value=token, httponly=True, samesite="lax")
+
         return {
             "status": "ok",
             "details": {
-                "username": f"{user_data.first_name} {user_data.middle_name or '-'} {user_data.last_name}",
+                "username": f"{user_data.first_name} {user_data.middle_name or ''} {user_data.last_name}".strip(),
                 "email": user_data.email,
             },
         }
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"{e}")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
 
 
 @router.post("/login")

@@ -7,7 +7,7 @@ from src.utils.verifications import verify_role
 router = APIRouter(prefix="/requests", tags=["Подача и обработка заявок."])
 
 
-@router.post("", response_model=ParticipationRequestRead, status_code=status.HTTP_201_CREATED)
+@router.post("/", response_model=ParticipationRequestRead, status_code=status.HTTP_200_OK)
 async def submit_participation_request(
     user: CurrentUser,
     db: DBDep,

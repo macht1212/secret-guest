@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Редактировать профиль</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="form-card">
+      <h1 class="form-title">Редактировать профиль</h1>
+
+      <!-- Форма обновления данных -->
+      <form id="updateProfileForm" class="form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="first_name">Имя</label>
+          <input type="text" id="first_name" name="first_name" />
+        </div>
+
+        <div class="form-group">
+          <label for="middle_name">Отчество</label>
+          <input type="text" id="middle_name" name="middle_name" />
+        </div>
+
+        <div class="form-group">
+          <label for="last_name">Фамилия</label>
+          <input type="text" id="last_name" name="last_name" />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Телефон</label>
+          <input type="tel" id="phone" name="phone" />
+        </div>
+
+        <div class="form-group">
+          <label for="city">Город</label>
+          <input type="text" id="city" name="city" />
+        </div>
+
+        <div class="form-group">
+          <label for="country">Страна</label>
+          <input type="text" id="country" name="country" />
+        </div>
+
+        <button type="submit" class="btn-submit">Сохранить изменения</button>
+      </form>
+
+      <!-- Форма смены пароля -->
+      <div class="section-divider"></div>
+      <form id="changePasswordForm" class="form">
+        <h2>Сменить пароль</h2>
+        <div class="form-group">
+          <label for="prev_password">Текущий пароль *</label>
+          <input type="password" id="prev_password" name="prev_password" required />
+        </div>
+        <div class="form-group">
+          <label for="new_password">Новый пароль *</label>
+          <input type="password" id="new_password" name="new_password" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label for="confirm_password">Подтвердите новый пароль *</label>
+          <input type="password" id="confirm_password" name="confirm_password" required minlength="6" />
+        </div>
+        <button type="submit" class="btn-submit">Обновить пароль</button>
+      </form>
+
+      <!-- Удаление аккаунта -->
+      <div class="section-divider"></div>
+      <div class="danger-zone">
+        <h2>Опасная зона</h2>
+        <p>Удаление аккаунта нельзя отменить. Все данные будут безвозвратно утеряны.</p>
+        <button id="deleteAccountBtn" class="btn-delete">Удалить аккаунт</button>
+      </div>
+
+      <div class="back-link">
+        <a href="profile.html">&larr; Вернуться в профиль</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="edit-profile.js"></script>
+</body>
+</html>

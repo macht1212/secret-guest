@@ -54,5 +54,5 @@ async def delete_hotel(id: int, user: CurrentUser, db: DBDep):
 
 
 @router.get("/all-hotels")
-async def get_all_hotels(db: DBDep):
-    return await db.hotels.get_all()
+async def get_all_hotels(db: DBDep, user: CurrentUser):
+    return await db.hotels.get_filtered(partner_id=user.id)

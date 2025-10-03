@@ -49,13 +49,26 @@ services:
       
       ALGORITHM: ${ALGORITHM}
       SECRET_KEY: ${SECRET_KEY:-your-secret-key-here}
-    ports:
-      - "8080:8080"
+    expose:
+      - "8080"
     volumes:
       - .:/app
     depends_on:
       - postgres
       - minio
+    networks:
+      - app-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
     networks:
       - app-net
 
